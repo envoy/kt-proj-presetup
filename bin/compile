@@ -2,26 +2,31 @@
 # bin/compile <build-dir> <cache-dir> <env-dir>
 
 workingDir=$(pwd)
-mkdir -p "$2"
+
+mkdir agent
+mkdir cert
 
 buildDir=$(cd "$1/" && pwd)
 cacheDir=$(cd "$2/" && pwd)
 envDir=$(cd "$3/" && pwd)
 
 main() {
-    validateEnvironment()
-    downloadCertificates()
-    downloadDatadogJavaAgent()
+    validateEnvironment
+    downloadCertificates
 }
 
-downloadCertFromS3() {
-    local date="$(date -u '+%a, %e %b %Y %H:%M:%S +0000')"
-    local string_to_sign
-    printf -v string_to_sign "%s\n%s\n\n%s\n%s" "GET" "" "$date" "$path"
-    local signature=$(echo -n "$string_to_sign" | openssl sha1 -binary -hmac "${AWS_SECRET_ACCESS_KEY}" | openssl base64)
-    local authorization="AWS ${AWS_ACCESS_KEY_ID}:${signature}"
+downloadCertificates() {
+    local resource="/${AWS_S3_CERT_BUCKET}/${AWS_S3_CERT_FILENAME}"
+    local contentType="application/x-pkcs12"
+    local dateValue="`date +'%a, %d %b %Y %H:%M:%S %z'`"
+    local stringToSign="GET\n\n${contentType}\n${dateValue}\n${resource}"
+    local signature=`/bin/echo -en "$stringToSign" | openssl sha1 -hmac ${AWS_SECRET_ACCESS_KEY} -binary | base64`
 
-    curl -o cert/$AWS_S3_CERT_FILENAME -s -f -H Date:"${date}}" -H Authorization:"${authorization}" https://s3.amazonaws.com"${path}"
+    curl -H "Host: ${AWS_S3_CERT_BUCKET}.s3.amazonaws.com" \
+        -H "Date: ${dateValue}" \
+        -H "Content-Type: ${contentType}" \
+        -H "Authorization: AWS ${AWS_ACCESS_KEY_ID}:${signature}" \
+        https://${AWS_S3_CERT_BUCKET}.s3.amazonaws.com/${AWS_S3_CERT_FILENAME}
 }
 
 downloadDatadogJavaAgent() {
@@ -54,3 +59,5 @@ validateEnvironment() {
         exit 1
     fi
 }
+
+main
