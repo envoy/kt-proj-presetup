@@ -6,7 +6,7 @@ set -e
 main() {
     makeNewDirectories
     installBoto3
-    downloadS3
+    downloadCertificateFromS3
     downloadJavaAgent
 }
 
@@ -19,7 +19,7 @@ installBoto3() {
     pip install boto3
 }
 
-downloadS3() {
+downloadCertificateFromS3() {
     python downloadS3.py
     mv $SSL_KEY_STORE_S3_FILENAME cert/$SSL_KEY_STORE_S3_FILENAME
 }
