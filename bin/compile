@@ -3,7 +3,14 @@
 
 set -e
 
+workingDir=$(pwd)
+mkdir -p "$2"
+buildDir=$(cd "$1/" && pwd)
+cacheDir=$(cd "$2/" && pwd)
+envDir=$(cd "$3/" && pwd)
+
 main() {
+    cd $buildDir
     makeNewDirectories
     installBoto3
     downloadCertificateFromS3
