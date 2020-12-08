@@ -23,6 +23,11 @@ makeNewDirectories() {
     mkdir -p cert
 }
 
+installPip() {
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    python get-pip.py
+}
+
 installBoto3() {
     pip install boto3
 }
