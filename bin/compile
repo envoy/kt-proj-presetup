@@ -9,7 +9,8 @@ buildDir=$(cd "$1/" && pwd)
 cacheDir=$(cd "$2/" && pwd)
 envDir=$(cd "$3/" && pwd)
 echo $envDir
-cat $envDir
+ls $envDir/*
+for f in $envDir/*;  do echo ${f}; done;
 
 main() {
     makeNewDirectories
