@@ -4,7 +4,7 @@ import os
 
 BUCKET_NAME = os.environ['SSL_KEY_STORE_S3_BUCKET']
 KEY = os.environ['SSL_KEY_STORE_S3_FILENAME']
-OUTPUT_PATH = os.environ['SSL_KEY_STORE_DEST']
+OUTPUT_PATH = os.environ['SSL_KEY_STORE_DESTINATION']
 
 s3 = boto3.resource('s3')
 
