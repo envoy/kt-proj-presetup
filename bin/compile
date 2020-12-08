@@ -1,10 +1,12 @@
 #!/bin/bash
 # bin/compile <build-dir> <cache-dir> <env-dir>
 
+set -e
+
 workingDir=$(pwd)
 
-mkdir agent
-mkdir cert
+mkdir -p agent
+mkdir -p cert
 
 buildDir=$(cd "$1/" && pwd)
 cacheDir=$(cd "$2/" && pwd)
