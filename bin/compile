@@ -8,6 +8,7 @@ main() {
     installBoto3
     downloadCertificateFromS3
     downloadJavaAgent
+    uninstallBoto3
 }
 
 makeNewDirectories() {
@@ -19,9 +20,12 @@ installBoto3() {
     pip install boto3
 }
 
+uninstallBoto3() {
+    pip uninstall -y boto3
+}
+
 downloadCertificateFromS3() {
     python downloadS3.py
-    mv $SSL_KEY_STORE_S3_FILENAME cert/$SSL_KEY_STORE_S3_FILENAME
 }
 
 downloadJavaAgent() {
