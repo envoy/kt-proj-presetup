@@ -13,6 +13,7 @@ envDir=$(cd "$3/" && pwd)
 main() {
     validateEnvironment
     downloadCertificates
+    downloadDatadogJavaAgent
 }
 
 downloadCertificates() {
