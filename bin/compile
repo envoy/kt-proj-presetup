@@ -1,0 +1,56 @@
+#!/bin/bash
+# bin/compile <build-dir> <cache-dir> <env-dir>
+
+workingDir=$(pwd)
+mkdir -p "$2"
+
+buildDir=$(cd "$1/" && pwd)
+cacheDir=$(cd "$2/" && pwd)
+envDir=$(cd "$3/" && pwd)
+
+main() {
+    validateEnvironment()
+    downloadCertificates()
+    downloadDatadogJavaAgent()
+}
+
+downloadCertFromS3() {
+    local date="$(date -u '+%a, %e %b %Y %H:%M:%S +0000')"
+    local string_to_sign
+    printf -v string_to_sign "%s\n%s\n\n%s\n%s" "GET" "" "$date" "$path"
+    local signature=$(echo -n "$string_to_sign" | openssl sha1 -binary -hmac "${AWS_SECRET_ACCESS_KEY}" | openssl base64)
+    local authorization="AWS ${AWS_ACCESS_KEY_ID}:${signature}"
+
+    curl -o cert/$AWS_S3_CERT_FILENAME -s -f -H Date:"${date}}" -H Authorization:"${authorization}" https://s3.amazonaws.com"${path}"
+}
+
+downloadDatadogJavaAgent() {
+    wget -O agent/dd-java-agent.jar https://dtdg.co/latest-java-tracer
+}
+
+validateEnvironment() {
+    if [ -z "${AWS_ACCESS_KEY_ID-}"  ]; then
+        echo "Missing AWS Access Credentials - AWS_ACCESS_KEY_ID"
+        exit 1
+    fi
+
+    if [ -z "${AWS_SECRET_ACCESS_KEY-}" ]; then
+        echo "Missing AWS Access Credentials - AWS_SECRET_ACCESS_KEY"
+        exit 1
+    fi
+
+    if [ -z "${AWS_S3_CERT_BUCKET-}" ]; then
+        echo "Missing Certificate S3 Bucket - AWS_S3_CERT_BUCKET"
+        exit 1
+    fi
+
+    if [ -z "${AWS_S3_CERT_FILENAME-}" ]; then
+        echo "Missing Certificate File Name - AWS_S3_CERT_FILENAME"
+        exit 1
+    fi
+
+    if [ -z "${CERT_OUTPUT_PATH-}" ]; then
+        echo "Missing Certificate Output Path - CERT_OUTPUT_PATH"
+        exit 1
+    fi
+}
