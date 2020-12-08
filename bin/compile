@@ -12,6 +12,7 @@ envDir=$(cd "$3/" && pwd)
 main() {
     cd $buildDir
     makeNewDirectories
+    installPip
     installBoto3
     downloadCertificateFromS3
     downloadJavaAgent
