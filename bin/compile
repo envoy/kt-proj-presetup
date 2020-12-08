@@ -11,11 +11,34 @@ envDir=$(cd "$3/" && pwd)
 
 main() {
     makeNewDirectories
+    createDownloadScript
     installPip
     installBoto3
     downloadCertificateFromS3
     downloadJavaAgent
     uninstallBoto3
+}
+
+createDownloadScript() {
+    tee -a downloadCert.py << END
+import boto3
+import botocore
+import os
+
+BUCKET_NAME = os.environ['SSL_KEY_STORE_S3_BUCKET']
+KEY = os.environ['SSL_KEY_STORE_S3_FILENAME']
+OUTPUT_PATH = os.environ['SSL_KEY_STORE_PATH']
+
+s3 = boto3.resource('s3')
+
+try:
+    s3.Bucket(BUCKET_NAME).download_file(KEY, OUTPUT_PATH)
+except botocore.exceptions.ClientError as e:
+    if e.response['Error']['Code'] == "404":
+        print("The object does not exist.")
+    else:
+        raise
+END
 }
 
 makeNewDirectories() {
@@ -37,7 +60,7 @@ uninstallBoto3() {
 }
 
 downloadCertificateFromS3() {
-    python downloadS3.py
+    python downloadCert.py
 }
 
 downloadJavaAgent() {
