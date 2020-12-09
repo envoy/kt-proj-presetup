@@ -12,8 +12,12 @@ The Java projects doesn't directly support PEM standard cryptographic keys. Inst
 * `SSL_KEY_STORE_S3_FILENAME` - Set the S3 Bucket Key (filename along with path if needed) that identifies the certificate
 * `SSL_KEY_STORE_OUTPUT_FILENAME` - Set the certificate output filename. You can use more relevant names based on your application.
 
+Once the file downloaded, the certificate will be available in `/app/cert` directory
+
 ## Task 2 - Download Datadog Java Agent
 
 It's hard to manage an application in Production without Monitoring in place. The Buildpack designed to download Datadog Java Agent for the monitoring purposes.
+
+Once the file downloaded, the agent will be available in `/app/agent/` directory
 
 > More features to add. Coming soon!
