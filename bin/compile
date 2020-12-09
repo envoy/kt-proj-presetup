@@ -21,9 +21,16 @@ main() {
     moveArtifacts
 }
 
-exportEnvironment() {
-    envList=(AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY SSL_KEY_STORE_S3_BUCKET SSL_KEY_STORE_S3_FILENAME SSL_KEY_STORE_PATH)
-    for e in "${envList[@]}"; do
+exportList() {
+    awsEnvList=(AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY)
+    exportEnvironments awsEnvList
+
+    sslConfigList=(SSL_KEY_STORE_S3_BUCKET SSL_KEY_STORE_S3_FILENAME SSL_KEY_STORE_PATH)
+    exportEnvironments sslConfigList
+}
+
+exportEnvironments() {
+    for e in "${$1[@]}"; do
         if [ -f $envDir/$e ]; then
             export "$e=$(cat $envDir/$e)"
         fi
