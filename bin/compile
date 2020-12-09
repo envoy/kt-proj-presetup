@@ -22,7 +22,7 @@ main() {
 }
 
 exporEnvironmentList() {
-    envList=(AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY SSL_KEY_STORE_S3_BUCKET SSL_KEY_STORE_S3_FILENAME SSL_KEY_STORE_PATH)
+    envList=(AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY SSL_KEY_STORE_S3_BUCKET SSL_KEY_STORE_S3_FILENAME SSL_KEY_STORE_OUTPUT_FILENAME)
     for e in "${envList[@]}"; do
         if [ -f $envDir/$e ]; then
             export "$e=$(cat $envDir/$e)"
