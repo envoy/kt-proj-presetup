@@ -11,7 +11,7 @@ envDir=$(cd "$3/" && pwd)
 
 main() {
     makeNewDirectories
-    exportEnvironments
+    exporEnvironmenttList
     createDownloadScript
     installPip
     installBoto3
@@ -21,17 +21,9 @@ main() {
     moveArtifacts
 }
 
-exportEnvironments() {
-    awsEnvList=(AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY)
-    exportList awsEnvList
-
-    sslConfigList=(SSL_KEY_STORE_S3_BUCKET SSL_KEY_STORE_S3_FILENAME SSL_KEY_STORE_PATH)
-    exportList sslConfigList
-}
-
-exportList() {
-    list=$1
-    for e in "${list[@]}"; do
+exporEnvironmenttList() {
+    envList=(AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY SSL_KEY_STORE_S3_BUCKET SSL_KEY_STORE_S3_FILENAME SSL_KEY_STORE_PATH)
+    for e in "${envList[@]}"; do
         if [ -f $envDir/$e ]; then
             export "$e=$(cat $envDir/$e)"
         fi
