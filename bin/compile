@@ -20,6 +20,7 @@ main() {
     downloadCertificateFromS3
     downloadJavaAgent
     uninstallBoto3
+    moveArtifacts
 }
 
 exportEnvironment() {
@@ -77,6 +78,10 @@ downloadCertificateFromS3() {
 
 downloadJavaAgent() {
     wget -O agent/dd-java-agent.jar https://dtdg.co/latest-java-tracer
+}
+
+moveArtifacts() {
+    mv -v agent cert $buildDir
 }
 
 main
