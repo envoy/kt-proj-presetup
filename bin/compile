@@ -30,7 +30,7 @@ exportEnvironments() {
 }
 
 exportList() {
-    for e in "${$1[@]}"; do
+    for e in "$1[@]"; do
         if [ -f $envDir/$e ]; then
             export "$e=$(cat $envDir/$e)"
         fi
