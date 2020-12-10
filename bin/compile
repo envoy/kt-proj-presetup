@@ -76,7 +76,7 @@ downloadCertificateFromS3() {
 }
 
 downloadJavaAgent() {
-    wget --progress=bar:force:noscroll -O agent/dd-java-agent.jar https://dtdg.co/latest-java-tracer
+    wget --progress=bar:force:noscroll -O agent/dd-java-agent.jar 'https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.datadoghq&a=dd-java-agent&v=LATEST'
 }
 
 moveArtifacts() {
