@@ -10,77 +10,14 @@ cacheDir=$(cd "$2/" && pwd)
 envDir=$(cd "$3/" && pwd)
 
 main() {
-    makeNewDirectories
-    exporEnvironmentList
-    createDownloadScript
-    installPip
-    installBoto3
-    downloadCertificateFromS3
-    downloadJavaAgent
-    uninstallBoto3
-    moveArtifacts
+    downloadDdJavaAgent
 }
 
-exporEnvironmentList() {
-    envList=(AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY SSL_KEY_STORE_S3_BUCKET SSL_KEY_STORE_S3_FILENAME SSL_KEY_STORE_OUTPUT_FILENAME)
-    for e in "${envList[@]}"; do
-        if [ -f $envDir/$e ]; then
-            export "$e=$(cat $envDir/$e)"
-        fi
-    done
-}
-
-createDownloadScript() {
-    tee -a downloadCert.py << END
-import boto3
-import botocore
-import os
-
-BUCKET_NAME = os.environ['SSL_KEY_STORE_S3_BUCKET']
-KEY = os.environ['SSL_KEY_STORE_S3_FILENAME']
-OUTPUT_FILENAME = os.environ['SSL_KEY_STORE_OUTPUT_FILENAME']
-OUTPUT_PATH = 'cert/%s' % OUTPUT_FILENAME
-
-s3 = boto3.resource('s3')
-
-try:
-    s3.Bucket(BUCKET_NAME).download_file(KEY, OUTPUT_PATH)
-except botocore.exceptions.ClientError as e:
-    if e.response['Error']['Code'] == "404":
-        print("The object does not exist.")
-    else:
-        raise
-END
-}
-
-makeNewDirectories() {
+downloadDdJavaAgent() {
+    echo "download datadog java agent..."
     mkdir -p agent
-    mkdir -p cert
-}
-
-installPip() {
-    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-    python get-pip.py
-}
-
-installBoto3() {
-    /app/.local/bin/pip install boto3
-}
-
-uninstallBoto3() {
-    /app/.local/bin/pip uninstall -y boto3
-}
-
-downloadCertificateFromS3() {
-    python downloadCert.py
-}
-
-downloadJavaAgent() {
     wget --progress=bar:force:noscroll -O agent/dd-java-agent.jar 'https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.datadoghq&a=dd-java-agent&v=LATEST'
-}
-
-moveArtifacts() {
-    mv -v agent cert $buildDir
+    mv -v agent $buildDir
 }
 
 main
